@@ -16,10 +16,10 @@ class Database {
 
     private function loadConfig() {
         $this->host     = getenv('DB_HOST')  ?: 'localhost';
-        $this->port     = getenv('DB_PORT')  ?: '3307';
-        $this->dbname   = getenv('DB_NAME')  ?: 'prompt_gateway';
-        $this->username = getenv('DB_USER')  ?: 'root';
-        $this->password = getenv('DB_PASS')  ?: '';
+        $this->port     = getenv('DB_PORT')  ?: '3306';
+        $this->dbname   = getenv('DB_NAME')  ?: 'astrozup_aipromptg';
+        $this->username = getenv('DB_USER')  ?: 'astrozup_aipromptgu';
+        $this->password = getenv('DB_PASS')  ?: 'v{Zt(9!PF_6J';
     }
 
     private function __construct() {
