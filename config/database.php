@@ -1,19 +1,29 @@
 <?php
 /**
  * AI Prompt Security Gateway — Database Configuration
+ * Reads from environment variables; falls back to local XAMPP defaults.
  */
 
 class Database {
     private static $instance = null;
     private $pdo;
 
-    private $host = 'localhost';
-    private $port = 3306;
-    private $dbname = 'astrozup_aipromptg';
-    private $username = 'astrozup_aipromptgu';
-    private $password = 'v{Zt(9!PF_6J';
+    private $host;
+    private $port;
+    private $dbname;
+    private $username;
+    private $password;
+
+    private function loadConfig() {
+        $this->host     = getenv('DB_HOST')  ?: 'localhost';
+        $this->port     = getenv('DB_PORT')  ?: '3307';
+        $this->dbname   = getenv('DB_NAME')  ?: 'prompt_gateway';
+        $this->username = getenv('DB_USER')  ?: 'root';
+        $this->password = getenv('DB_PASS')  ?: '';
+    }
 
     private function __construct() {
+        $this->loadConfig();
         try {
             $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->dbname};charset=utf8mb4";
             $this->pdo = new PDO($dsn, $this->username, $this->password, [
