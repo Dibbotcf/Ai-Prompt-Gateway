@@ -47,6 +47,14 @@ https://aiprompt.astrozupi.com
 
 | Field         | Value                    |
 |---------------|--------------------------|
+| **DB_HOST**   | <internal-host>          |
+| **DB_PORT**   | 3306                     |
+| **DB_NAME**   | prompt_gateway           |
+| **DB_USER**   | <username>               |
+| **DB_PASS**   | <password>               |
+
+> **Next steps**: After you create the MySQL resource in Coolify (Project → + New Resource → Database → MySQL), fill the above fields with the values shown on the MySQL details page. Then redeploy the app.
+|---------------|--------------------------|
 | **DB_HOST**   | *(from Coolify MySQL service)* |
 | **DB_PORT**   | `3306`                   |
 | **DB_NAME**   | `prompt_gateway`         |

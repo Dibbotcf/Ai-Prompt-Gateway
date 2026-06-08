@@ -7,10 +7,30 @@
 
 header('Content-Type: text/html; charset=utf-8');
 
-$host = 'localhost';
-$user = 'root';
-$pass = '';
-$port = 3306;
+$isLocal = false;
+if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+    $isLocal = true;
+}
+if (isset($_SERVER['HTTP_HOST'])) {
+    $hostHeader = strtolower($_SERVER['HTTP_HOST']);
+    if (strpos($hostHeader, 'localhost') !== false || 
+        strpos($hostHeader, '127.0.0.1') !== false || 
+        $hostHeader === '[::1]') {
+        $isLocal = true;
+    }
+}
+
+$dbHost = getenv('DB_HOST');
+$dbPort = getenv('DB_PORT');
+$dbName = getenv('DB_NAME');
+$dbUser = getenv('DB_USER');
+$dbPass = getenv('DB_PASS');
+
+$host   = ($dbHost !== false) ? $dbHost : 'localhost';
+$port   = ($dbPort !== false) ? intval($dbPort) : ($isLocal ? 3307 : 3306);
+$dbname = ($dbName !== false) ? $dbName : ($isLocal ? 'prompt_gateway' : 'astrozup_aipromptg');
+$user   = ($dbUser !== false) ? $dbUser : ($isLocal ? 'root' : 'astrozup_aipromptgu');
+$pass   = ($dbPass !== false) ? $dbPass : ($isLocal ? '' : 'v{Zt(9!PF_6J');
 
 echo "<h2>AI Prompt Security Gateway — Database Setup</h2>";
 echo "<pre>";
@@ -31,6 +51,7 @@ try {
     }
 
     $schema = file_get_contents($schemaFile);
+    $schema = str_replace('`prompt_gateway`', "`$dbname`", $schema);
     $statements = array_filter(
         array_map('trim', explode(';', $schema)),
         function($s) { return !empty($s) && $s !== ''; }
@@ -48,6 +69,7 @@ try {
     }
 
     $seed = file_get_contents($seedFile);
+    $seed = str_replace('`prompt_gateway`', "`$dbname`", $seed);
     $statements = array_filter(
         array_map('trim', explode(';', $seed)),
         function($s) { return !empty($s) && $s !== ''; }
@@ -59,7 +81,7 @@ try {
     echo "✓ Seed data inserted successfully\n";
 
     // Verify
-    $pdo->exec("USE prompt_gateway");
+    $pdo->exec("USE `$dbname`");
     $tables = $pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
     echo "\n✓ Tables created: " . implode(', ', $tables) . "\n";
 

@@ -15,11 +15,35 @@ class Database {
     private $password;
 
     private function loadConfig() {
-        $this->host     = getenv('DB_HOST')  ?: 'localhost';
-        $this->port     = getenv('DB_PORT')  ?: '3306';
-        $this->dbname   = getenv('DB_NAME')  ?: 'astrozup_aipromptg';
-        $this->username = getenv('DB_USER')  ?: 'astrozup_aipromptgu';
-        $this->password = getenv('DB_PASS')  ?: 'v{Zt(9!PF_6J';
+        // Detect local environment based on operating system and/or HTTP host
+        $isLocal = false;
+        
+        // 1. Check if running on Windows (the local development OS)
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $isLocal = true;
+        }
+        
+        // 2. Check if running under a local domain/address
+        if (isset($_SERVER['HTTP_HOST'])) {
+            $hostHeader = strtolower($_SERVER['HTTP_HOST']);
+            if (strpos($hostHeader, 'localhost') !== false || 
+                strpos($hostHeader, '127.0.0.1') !== false || 
+                $hostHeader === '[::1]') {
+                $isLocal = true;
+            }
+        }
+
+        $dbHost = getenv('DB_HOST');
+        $dbPort = getenv('DB_PORT');
+        $dbName = getenv('DB_NAME');
+        $dbUser = getenv('DB_USER');
+        $dbPass = getenv('DB_PASS');
+
+        $this->host     = ($dbHost !== false) ? $dbHost : 'localhost';
+        $this->port     = ($dbPort !== false) ? $dbPort : ($isLocal ? '3307' : '3306');
+        $this->dbname   = ($dbName !== false) ? $dbName : ($isLocal ? 'prompt_gateway' : 'astrozup_aipromptg');
+        $this->username = ($dbUser !== false) ? $dbUser : ($isLocal ? 'root' : 'astrozup_aipromptgu');
+        $this->password = ($dbPass !== false) ? $dbPass : ($isLocal ? '' : 'v{Zt(9!PF_6J');
     }
 
     private function __construct() {
